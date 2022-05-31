@@ -49,17 +49,17 @@ class ComputerRepository
     public Computer Save(Computer computer){
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
+        
         var command = connection.CreateCommand();
-
-        command.CommandText = $"INSERT INTO Computers VALUES($id, $ram, $processor)";
+        command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor)";
 
         command.Parameters.AddWithValue("$id", computer.Id);
         command.Parameters.AddWithValue("$ram", computer.Ram);
         command.Parameters.AddWithValue("$processor", computer.Processor);
 
         command.ExecuteNonQuery();
-        connection.Close(); 
-        return computer; 
+        connection.Close();
+        return computer;
     }
 
     public Computer GetById(int id)
@@ -97,5 +97,18 @@ class ComputerRepository
         connection.Close();
 
         return computer;
+    }
+
+    public void Delete(int id)
+    {
+        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        connection.Open();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM Computers WHERE ID = ($id)";
+        command.Parameters.AddWithValue("$id", id);
+        command.ExecuteNonQuery();
+
+        connection.Close();
     }
 }
