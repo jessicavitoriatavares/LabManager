@@ -27,7 +27,7 @@ if (modelName == "Computer")
         }
     }
 
-    else if (modelAction == "New")
+    if (modelAction == "New")
     {
         var id = Convert.ToInt32(args[2]);
         var ram = args[3];
@@ -37,8 +37,16 @@ if (modelName == "Computer")
 
         computerRepository.Save(computer);
     }
+
+    if(modelAction == "Show")
+    {
+        var id = Convert.ToInt32(args[2]);
+        var computer = computerRepository.GetById(id);
+        Console.WriteLine($"{computer.Id}, {computer.Ram}, {computer.Processor}");
+    }
+
 }
-else if (modelName == "Lab")
+if (modelName == "Lab")
 {
     switch (modelAction)
     {
