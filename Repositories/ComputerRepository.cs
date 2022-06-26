@@ -28,9 +28,8 @@ class ComputerRepository
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-
         var computer = connection.QuerySingle<Computer>("SELECT * FROM Computers WHERE ID = (@Id)", new { Id = id });
-
+            
         connection.Close();
         return computer;
     }
@@ -38,24 +37,20 @@ class ComputerRepository
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-        var command = connection.CreateCommand();
-        command.CommandText = "UPDATE Computers SET ram = ($ram), processor = ($processor) WHERE ID = ($id)";
-        command.Parameters.AddWithValue("$id", computer.Id);
-        command.Parameters.AddWithValue("$ram", computer.Ram);
-        command.Parameters.AddWithValue("$processor", computer.Processor);
-        command.ExecuteNonQuery();
+
+        connection.Execute("UPDATE Computers SET ram = (@Ram), processor = (@Processor) WHERE ID = (@Id)", computer);
+
         connection.Close();
         return computer;
     }
+
     public void Delete(int id)
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-        
-        var command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM Computers WHERE ID = ($id)";
-        command.Parameters.AddWithValue("$id", id);
-        command.ExecuteNonQuery();
+
+        connection.Execute("DELETE FROM Computers WHERE ID = (@Id)",  new { Id = id });
+
         connection.Close();
     }
     private Computer ReaderToComputer(SqliteDataReader reader)
@@ -71,7 +66,6 @@ class ComputerRepository
         var command = connection.CreateCommand();
         command.CommandText = "SELECT count(id) FROM Computers WHERE ID = ($id)";
         command.Parameters.AddWithValue("$id", id);
-
         var result = Convert.ToBoolean(command.ExecuteScalar());
         return result;
     }
