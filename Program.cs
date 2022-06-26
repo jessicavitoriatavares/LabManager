@@ -27,7 +27,7 @@ if (modelName == "Computer")
         }
     }
 
-    else if (modelAction == "New")
+    if (modelAction == "New")
     {
         var id = Convert.ToInt32(args[2]);
         var ram = args[3];
@@ -38,13 +38,13 @@ if (modelName == "Computer")
         computerRepository.Save(computer);
     }
 
-    else if(modelAction == "Show")
+    if(modelAction == "Show")
     {
         var id = Convert.ToInt32(args[2]);
         var computer = computerRepository.GetById(id);
         Console.WriteLine($"{computer.Id}, {computer.Ram}, {computer.Processor}");
     }
-    else if(modelAction == "Update")
+    if(modelAction == "Update")
     {
         var id = Convert.ToInt32(args[2]);
         string ram = args[3];
@@ -53,9 +53,14 @@ if (modelName == "Computer")
         var computer = new Computer(id, ram, processor);
         computerRepository.Update(computer);
     }
+    if(modelAction == "Delete")
+    {
+        var id = Convert.ToInt32(args[2]);
+        computerRepository.Delete(id);
+    }
 }
 
-else if (modelName == "Lab")
+if (modelName == "Lab")
 {
     switch (modelAction)
     {
