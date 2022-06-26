@@ -32,13 +32,11 @@ class LabRepository
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-
         connection.Execute("UPDATE Labs SET number = (@Number), name = (@Name), block = (@Block) WHERE id = (@Id)", lab);
-
+        
         connection.Close();
         return lab;
     }
-
     public Lab GetById(int id)
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
@@ -52,20 +50,17 @@ class LabRepository
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-
         connection.Execute("DELETE FROM Labs WHERE id = (@Id)", new { Id = id });
-
         connection.Close();
     }
 
     public bool ExistsById(int id)
     {
-        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-        var command = connection.CreateCommand();
-        command.CommandText = "SELECT count(id) FROM Labs WHERE id = ($id)";
-        command.Parameters.AddWithValue("$id", id);
-        var result = Convert.ToBoolean(command.ExecuteScalar());
+
+        var result = connection.ExecuteScalar<bool>("SELECT count(id) FROM Labs WHERE id = @Id;", new { Id = id });
+
         return result;
     }
     private Lab ReaderToLab(SqliteDataReader reader)

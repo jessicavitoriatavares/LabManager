@@ -37,20 +37,15 @@ class ComputerRepository
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-
         connection.Execute("UPDATE Computers SET ram = (@Ram), processor = (@Processor) WHERE ID = (@Id)", computer);
-
         connection.Close();
         return computer;
     }
-
     public void Delete(int id)
     {
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-
         connection.Execute("DELETE FROM Computers WHERE ID = (@Id)",  new { Id = id });
-
         connection.Close();
     }
     private Computer ReaderToComputer(SqliteDataReader reader)
@@ -59,14 +54,14 @@ class ComputerRepository
         
         return computer;
     }
+
     public bool ExistsById(int id)
     {
-        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
-        var command = connection.CreateCommand();
-        command.CommandText = "SELECT count(id) FROM Computers WHERE ID = ($id)";
-        command.Parameters.AddWithValue("$id", id);
-        var result = Convert.ToBoolean(command.ExecuteScalar());
+
+        var result = connection.ExecuteScalar<bool>("SELECT count(id) FROM Computers WHERE id = @Id;" , new { Id = id });
+
         return result;
     }
 }
